@@ -750,7 +750,7 @@ class ServerCoinGuard:
            break
                                
        urltosendto = trueserverlist["Data"][str(item)]
-       time.sleep(20)
+       time.sleep(2000)
        oneoftheblocks = requests.post(str(trueserverlist["NEWDATA"][urltosendto]["PROTOCOL"])+str(urltosendto)+"/getoneoftheblocks",json=data)
        try:
         oneoftheblocks = oneoftheblocks.json()
