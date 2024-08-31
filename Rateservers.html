@@ -1,0 +1,632 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Review System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .button-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .redirect-button, .action-button, .like-button, .dislike-button, .read-comments-button, .next-review-button, .comment-button, .submit-comment-button, .next-comment-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .redirect-button:hover, .action-button:hover, .like-button:hover, .dislike-button:hover, .read-comments-button:hover, .next-review-button:hover, .comment-button:hover, .submit-comment-button:hover, .next-comment-button {
+            background-color: #45a049;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .input-container {
+            margin-bottom: 10px;
+        }
+        #reviewBox, #sortOptions, #commentBox {
+            display: none;
+            margin-top: 10px;
+        }
+        #reviewResult {
+            margin-top: 10px;
+            font-style: italic;
+        }
+        .review-item {
+            margin-bottom: 20px;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        #serverInput, #sortSelect {
+            width: 100%;
+            max-width: 300px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        #reviewText, #commentText {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 5px;
+        }
+        #starsSelect,
+        #sortSelect  {
+            border-radius: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        #superSelect {
+            border-radius: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 25%;
+            box-sizing: border-box;
+        }
+        #serverInput {
+            border-radius: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box*1.16;
+            margin-top: 5px
+        }
+        #commentText, #reviewText {
+            border-radius: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+            width: 100%;
+            box-sizing: border-box*1.16;
+            margin-top: 5px
+        }
+        #serverInput {
+            width: calc(116% - 20px); /* Adjusted width to be 16% wider */
+        }
+        .select-container {
+            margin-top: 10px;
+        }
+        .action-button {
+            border-radius: 15px;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .action-button:hover {
+            background-color: #0056b3;
+        }
+        .image-link img {
+            max-width: 150px; /* Adjust size as needed */
+            height: auto;
+        }
+        .container {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+        }
+        .image-link:last-child {
+            margin-left: auto; /* Pushes the right image to the right */
+        }
+        .close-button {
+         background-color: #007BFF; /* Blue background */
+         color: white;              /* White text */
+         border: none;              /* Remove border */
+         border-radius: 50%;        /* Make the button round */
+         padding: 10px 20px;        /* Add padding */
+         font-size: 16px;           /* Increase font size */
+         cursor: pointer;           /* Pointer cursor on hover */
+         text-align: center;        /* Center the text */
+        }
+        .close-button:hover {
+         background-color: #0056b3; /* Darker blue on hover */
+        }
+    </style>
+    </style>
+
+</head>
+<body>
+   <div class="button-container">
+    <a href="/addserverpage" class="redirect-button">Add Server</a>
+    <a href="/signup" class="redirect-button">Sign Up</a>
+   </div>
+   <div class="container">
+        <a href="https://www.example.com/left-image" class="image-link">
+            <img src="/static/right-image2.png" alt="Left Image" >
+        </a>
+        <a href="https://www.example.com/right-image" class="image-link">
+            <img src="/static/right-image.png" alt="Right Image" >
+        </a>
+        <button class="close-button" onclick="closeImages()">X</button>
+
+
+   </div>
+   <div class="content">
+    <h1>Welcome to the Server Review System</h1>
+    <div class="input-container">
+        <label for="serverInput">Input Server:</label><br>
+        <input type="text" id="serverInput" placeholder="Enter server name">
+    </div>
+    <div>
+        <button class="action-button" onclick="showReviewBox()">Add Review</button>
+        <button class="action-button" onclick="showSortOptions()">Read Reviews</button>
+        <button class="action-button" onclick="getStars()">Get Stars</button>
+    </div>
+    <div id="starsResult"></div>
+    <div id="reviewBox" style="display: none;">
+        <textarea id="reviewText" rows="4" cols="50" placeholder="Write your review here"></textarea>
+        <br>
+        <label for="starsSelect">Stars:</label>
+        <select id="starsSelect">
+            <option value="0">0 stars</option>
+            <option value="1">1 star</option>
+            <option value="2">2 stars</option>
+            <option value="3">3 stars</option>
+            <option value="4">4 stars</option>
+            <option value="5">5 stars</option>
+        </select>
+        <br>
+        <button class="action-button" onclick="submitReview()">Submit Review</button>
+      </div>
+      <div id="sortOptions" style="display: none;">
+        <select id="sortSelect">
+            <option value="HighestStars">Most Stars</option>
+            <option value="LowestStars">Least Stars</option>
+            <option value="MostLikes">Most Likes</option>
+            <option value="LeastLikes">Least Likes</option>
+            <option value="MostDislikes">Most Dislikes</option>
+            <option value="LeastDislikes">Least Dislikes</option>
+            <option value="NewestFirst">Newest First</option>
+            <option value="OldestFirst">Oldest First</option>
+        </select>
+        <button class="action-button" onclick="readReview()">Show Reviews</button>
+      </div>
+     
+      <div id="reviewResult"></div>
+    </div>
+
+    <script>
+        
+        function showSortOptions() {
+            document.getElementById('sortOptions').style.display = 'block';
+        }
+        let commentIndex = 0;
+        const commentsData = [
+            "You are stupid!",
+            "You are correct!",
+            "Liar liar pants on fire!"
+        ];
+        let reviewIndex = 0;
+        const reviewsData = {
+            HighestStars: [
+                "5 stars - Great server! Fast and reliable.",
+                "4 stars - Excellent customer support.",
+                "3 stars - Decent performance, but could be better.",
+                "2 stars - Had some downtime issues, but overall okay."
+            ],
+            LowestStars: [
+                "2 stars - Had some downtime issues, but overall okay.",
+                "3 stars - Decent performance, but could be better.",
+                "4 stars - Excellent customer support.",
+                "5 stars - Great server! Fast and reliable."
+            ]
+        };
+
+        function showReviewBox() {
+            document.getElementById('reviewBox').style.display = 'block';
+        }
+        function unixToNormalTime(unixTimestamp) {
+         // Create a new JavaScript Date object based on the Unix timestamp
+         // Multiply by 1000 because the Unix timestamp is in seconds, and Date expects milliseconds
+         const date = new Date(unixTimestamp * 1000);
+
+         // Extract the various components of the date
+         const year = date.getFullYear();
+         const month = ('0' + (date.getMonth() + 1)).slice(-2); // Months are zero-based
+         const day = ('0' + date.getDate()).slice(-2);
+         const hours = ('0' + date.getHours()).slice(-2);
+         const minutes = ('0' + date.getMinutes()).slice(-2);
+         const seconds = ('0' + date.getSeconds()).slice(-2);
+
+         // Format the date and time as "YYYY-MM-DD HH:MM:SS"
+         const formattedDate = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+
+         return formattedDate;
+        }
+        function submitReview() {
+            const serverName = document.getElementById('serverInput').value;
+            const reviewText = document.getElementById('reviewText').value;
+            const stars = document.getElementById('starsSelect').value;
+
+            const reviewData = {
+                Server: serverName,
+                Review: reviewText,
+                Stars: stars
+            };
+
+            fetch('/makereview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(reviewData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                alert('Review submitted successfully!');
+                document.getElementById('reviewBox').style.display = 'none';
+                document.getElementById('reviewText').value = '';
+                // Optionally, you can handle any response data here
+            })
+            .catch(error => {
+                console.error('Error submitting review:', error);
+                alert('Failed to submit review. Please try again.');
+            });
+        }
+
+        function showSortOptions2() {
+            document.getElementById('sortOptions2'
+           ).style.display = 'block';
+        }
+        function closeImages() {
+        // Hide all elements with the class 'image-link'
+         var images = document.querySelectorAll('.image-link');
+         images.forEach(function(image) {
+            image.style.display = 'none';
+         });
+        }
+        function escapeHtml(unsafe) {
+         return unsafe
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+        }
+        function readReview() {
+            const sortOption = document.getElementById('sortSelect').value;
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                SortType: sortOption,
+                Number: reviewIndex+1
+            };
+
+            fetch('/getreviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                const review = data;
+                let reviewData = `${unixToNormalTime(review.CreationDate)}  -   ${review.Poster}  -  ${review.Stars} star${review.Stars > 1 ? 's' : ''} - ${review.Review}`;
+                if (review) {
+                    const reviewItem = `
+                        <div class="review-item">
+                           <div class="review-data-box">
+                             ${escapeHtml(reviewData)}
+                           </div>
+                            <div class="button-group">
+                                <button class="like-button" onclick="likeReview(${review.ReviewCount})">Like  `+review["Likes"].toString()+`</button>
+                                <button class="dislike-button" onclick="dislikeReview(${review.ReviewCount})">Dislike  `+review["Dislikes"].toString()+`</button>
+                                <button class="comment-button" onclick="showCommentBox(this)">Comment</button>
+                                <div class="comment-box" style="display: none;">
+                                    <textarea id="commentText" rows="2" cols="50" placeholder="Enter your comment here"></textarea>
+                                    <br>
+                                    <button class="submit-comment-button" onclick="submitComment(this,${review.ReviewCount})">Submit Comment</button>
+                                </div>
+                                <button class="read-comments-button" onclick="showSortOptions2()">Read Comments</button>
+                                <div id="sortOptions2" style="display: none;">
+                                 <select id="superSelect">
+                                  <option value="MostLikes">Most Likes</option>
+                                  <option value="LeastLikes">Least Likes</option>
+                                  <option value="MostDislikes">Most Dislikes</option>
+                                  <option value="LeastDislikes">Least Dislikes</option>
+                                  <option value="NewestFirst">Newest First</option>
+                                  <option value="OldestFirst">Oldest First</option>
+                                 </select>
+                                 <button id = "action-button" class="action-button" onclick="readComments(this,${review.ReviewCount})">Show Comments</button>
+                                </div>
+                                <button class="dislike-button" onclick="readReview()">Show Next Review</button>
+
+                            </div>
+                            <div class="comments"></div>
+                        </div>
+
+                    `;
+                    const styles = `
+                     .review-data-box {
+                       background-color: green;
+                       padding: 10px;
+                       border-radius: 5px;
+                       color: white;
+                     }
+                    `;
+
+                    const styleSheet = document.createElement("style");
+                    styleSheet.type = "text/css";
+                    styleSheet.innerText = styles;
+                    document.head.appendChild(styleSheet);
+                    document.getElementById('reviewResult').innerHTML += reviewItem;
+                    reviewIndex++;
+                } else {
+                    alert('No more reviews to display.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching review:', error);
+                alert('Failed to fetch review. Please try again.');
+            });
+        }
+
+        function readComments(button,Review) {
+            console.log("BUTTON: "+button.toString())
+            const reviewItem = button.closest('.review-item');
+            const commentsContainer = reviewItem.querySelector('.comments');
+            commentsContainer.innerHTML = `<div>Comments:</div>`;
+            loadNextComment(commentsContainer,Review);
+        }
+
+        function loadNextComment(commentsContainer,review) {
+            const sortOption = document.getElementById('superSelect').value;
+            const serverName = document.getElementById('serverInput').value;
+            requestData =
+            {
+                Server: serverName,
+                SortOption: sortOption,
+                Review: review,
+                Number: commentIndex
+
+             
+            }
+            fetch('/getcomments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                const comment = data.Poster.toString()+" - " +unixToNormalTime(data.CreationDate)+" - "+data.Comment;
+                const commentItem = `
+                    <div class="comment-item">
+                        ${escapeHtml(comment)}
+                        <div class="button-group">
+                            <button class="like-button" onclick="likeComment(${review, data.CommentCount})">Like ${data.Likes}</button>
+                            <button class="dislike-button" onclick="dislikeComment(${review, data.CommentCount})">Dislike ${data.Dislikes}</button>
+                            <button class="next-comment-button" onclick="readComments(document.getElementById(&quot;action-button&quot;), ${review})">Load Next Comment</button>
+
+                        </div>
+                    </div>
+                `;
+                commentsContainer.insertAdjacentHTML('beforeend', commentItem);
+                commentIndex++;
+            });
+        }
+
+        function getStars() {
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName
+            };
+
+            fetch('/getstars', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                }
+                throw new Error('Network response was not ok.');
+            })
+            .then(data => {
+                document.getElementById('starsResult').innerText = `Stars: ${data}`;
+            })
+            .catch(error => {
+                console.error('Error fetching stars:', error);
+                alert('Failed to fetch stars. Please try again.');
+            });
+        }
+
+        function likeReview(reviewCount) {
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                Review: reviewCount
+            };
+
+            fetch('/likereview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Review liked successfully!');
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch(error => {
+                console.error('Error liking review:', error);
+                alert('Failed to like review. Please try again.');
+            });
+        }
+
+        function dislikeReview(reviewCount) {
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                Review: reviewCount
+            };
+
+            fetch('/dislikereview', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Review disliked successfully!');
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch(error => {
+                console.error('Error disliking review:', error);
+                alert('Failed to dislike review. Please try again.');
+            });
+        }
+        function likeComment(reviewCount,CommentCount) {
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                Review: reviewCount,
+                CommentID: CommentCount
+            };
+
+            fetch('/likecomment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Comment liked successfully!');
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch(error => {
+                console.error('Error liking comment:', error);
+                alert('Failed to like review. Please try again.');
+            });
+        }  
+        function dislikeComment(reviewCount,CommentCount) {
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                Review: reviewCount,
+                CommentID: CommentCount
+            };
+
+            fetch('/dislikecomment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Comment disliked successfully!');
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch(error => {
+                console.error('Error disliking comment:', error);
+                alert('Failed to like review. Please try again.');
+            });
+        }
+        function showCommentBox(button) {
+            const reviewItem = button.closest('.review-item');
+            const commentBox = reviewItem.querySelector('.comment-box');
+            commentBox.style.display = 'block';
+        }
+
+        function submitComment(button,count) {
+            const reviewItem = button.closest('.review-item');
+            const commentBox = reviewItem.querySelector('.comment-box');
+            const commentText = commentBox.querySelector('#commentText').value;
+            const serverName = document.getElementById('serverInput').value;
+
+            const requestData = {
+                Server: serverName,
+                Review: count,  // Assuming reviewIndex points to the current review
+                Comment: commentText
+            };
+
+            fetch('/makecomment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+            .then(response => {
+                if (response.ok) {
+                    alert('Comment submitted successfully!');
+                    commentBox.style.display = 'none';
+                    commentBox.querySelector('#commentText').value = '';
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch(error => {
+                console.error('Error submitting comment:', error);
+                alert('Failed to submit comment. Please try again.');
+            });
+        }
+    </script>
+</body>
+</html>

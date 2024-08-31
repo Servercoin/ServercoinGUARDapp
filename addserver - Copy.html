@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Review System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .button-container {
+            background-color: #f0f0f0;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .redirect-button, .action-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 5px 0;
+        }
+        .redirect-button:hover, .action-button:hover {
+            background-color: #45a049;
+        }
+        .content {
+            padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .input-container {
+            margin-bottom: 10px;
+        }
+        #reviewBox, #sortOptions {
+            display: none;
+            margin-top: 10px;
+        }
+        #reviewResult {
+            margin-top: 10px;
+            font-style: italic;
+            text-align: left;
+        }
+        .review-item {
+            margin-bottom: 20px;
+        }
+        .button-group {
+            margin-top: 10px;
+        }
+        .like-button, .dislike-button, .comment-button, .read-comments-button, .next-review-button, .next-comment-button {
+            background-color: #4CAF50;
+            border: none;
+            color: white;
+            padding: 5px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 4px;
+            margin: 0 5px;
+        }
+        .like-button:hover, .dislike-button:hover, .comment-button:hover, .read-comments-button:hover, .next-review-button:hover, .next-comment-button:hover {
+            background-color: #45a049;
+        }
+        #serverInput, #sortSelect {
+            width: 100%;
+            max-width: 300px;
+            padding: 5px;
+            margin-top: 5px;
+        }
+        #reviewText {
+            width: 100%;
+            max-width: 300px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="button-container">
+        <a href="/addserverpage" class="redirect-button">Add Server</a>
+        <a href="/signup" class="redirect-button">Sign Up</a>
+    </div>
+    <div class="content">
+        <h1>Welcome to the Server Review System</h1>
+        <div class="input-container">
+            <label for="serverInput">Input Server:</label><br>
+            <input type="text" id="serverInput" placeholder="Enter server name">
+        </div>
+        <button class="action-button" onclick="showReviewBox()">Add Review</button>
+        <div id="reviewBox">
+            <textarea id="reviewText" rows="4" cols="50" placeholder="Write your review here"></textarea>
+            <br>
+            <button class="action-button" onclick="submitReview()">Submit Review</button>
+        </div>
+        <button class="action-button" onclick="showSortOptions()">Read Reviews</button>
+        <div id="sortOptions">
+            <select id="sortSelect">
+                <option value="most">Most Stars</option>
+                <option value="least">Least Stars</option>
+            </select>
+            <button class="action-button" onclick="readReview()">Show Reviews</button>
+        </div>
+        <div id="reviewResult"></div>
+    </div>
+
+    <script>
+        let commentIndex = 0;
+        const commentsData = [
+            "You are stupid!",
+            "You are correct!",
+            "Liar liar pants on fire!"
+        ];
+
+        let reviewIndex = 0;
+        const reviewsData = {
+            most: [
+                "5 stars - Great server! Fast and reliable.",
+                "4 stars - Excellent customer support.",
+                "3 stars - Decent performance, but could be better.",
+                "2 stars - Had some downtime issues, but overall okay."
+            ],
+            least: [
+                "2 stars - Had some downtime issues, but overall okay.",
+                "3 stars - Decent performance, but could be better.",
+                "4 stars - Excellent customer support.",
+                "5 stars - Great server! Fast and reliable."
+            ]
+        };
+
+        function showReviewBox() {
+            document.getElementById('reviewBox').style.display = 'block';
+        }
+
+        function submitReview() {
+            alert('Review submitted!');
+            document.getElementById('reviewBox').style.display = 'none';
+            document.getElementById('reviewText').value = '';
+        }
+
+        function showSortOptions() {
+            document.getElementById('sortOptions').style.display = 'block';
+        }
+
+        function readReview() {
+            const sortOption = document.getElementById('sortSelect').value;
+            const reviews = reviewsData[sortOption];
+
+            if (reviewIndex < reviews.length) {
+                const review = reviews[reviewIndex];
+                const reviewItem = `
+                    <div class="review-item">
+                        ${review}
+                        <div class="button-group">
+                            <button class="like-button" onclick="likeReview()">Like</button>
+                            <button class="dislike-button" onclick="dislikeReview()">Dislike</button>
+                            <button class="comment-button" onclick="commentReview()">Comment</button>
+                            <button class="read-comments-button" onclick="readComments(this)">Read Comments</button>
+                            <button class="next-review-button" onclick="readReview()">Show Next Review</button>
+                        </div>
+                        <div class="comments"></div>
+                    </div>
+                `;
+
+                document.getElementById('reviewResult').innerHTML += reviewItem;
+                reviewIndex++;
+            } else {
+                alert('No more reviews to display.');
+            }
+        }
+
+        function readComments(button) {
+            const reviewItem = button.closest('.review-item');
+            const commentsContainer = reviewItem.querySelector('.comments');
+            commentsContainer.innerHTML = `<div>Comments:</div>`;
+            const nextCommentButton = `
+                <button class="next-comment-button" onclick="loadNextComment(this)">Load Next Comment</button>
+            `;
+            commentsContainer.innerHTML += nextCommentButton;
+        }
+
+        function loadNextComment(button) {
+            if (commentIndex < commentsData.length) {
+                const comment = commentsData[commentIndex];
+                const commentItem = `
+                    <div class="comment-item">
+                        ${comment}
+                        <div class="button-group">
+                            <button class="like-button" onclick="likeReview()">Like</button>
+                            <button class="dislike-button" onclick="dislikeReview()">Dislike</button>
+                            <button class="comment-button" onclick="commentReview()">Comment</button>
+                        </div>
+                    </div>
+                `;
+                const commentsContainer = button.closest('.comments');
+                commentsContainer.insertAdjacentHTML('beforeend', commentItem);
+                commentIndex++;
+            } else {
+                alert('No more comments to display.');
+            }
+        }
+
+        function likeReview() {
+            alert('You liked this review!');
+        }
+
+        function dislikeReview() {
+            alert('You disliked this review!');
+        }
+
+        function commentReview() {
+            alert('You want to comment on this review!');
+        }
+    </script>
+</body>
+</html>

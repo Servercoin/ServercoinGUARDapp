@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Server Rating App</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: black;
+            color: white;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px;
+            background-color: #f0f0f0;
+        }
+        .button {
+            padding: 10px 125px;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            font-weight: bold;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .server-input {
+            margin-top: 325px;
+            text-align: center;
+        }
+        .server-input input[type="text"] {
+            padding: 10px;
+            width: 300px;
+            background-color: white;
+            color: black;
+            border: none;
+            border-radius: 5px;
+        }
+        .server-input input::placeholder {
+            color: black;
+        }
+        .add-server-button {
+            margin-top: 20px;
+            padding: 10px 125px;
+            background-color: yellow;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .add-server-button:hover {
+            background-color: #e6b800;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <a href="/rateservers" class="button">Rate a Server</a>
+        <a href="/signup" class="button">Sign Up</a>
+    </div>
+    <div class="server-input">
+        <input type="text" id="serverName" placeholder="Enter Server Name" required>
+        <button class="add-server-button" onclick="addServer()">Add Server</button>
+    </div>
+
+    <script>
+     function addServer() {
+        const serverName = document.getElementById('serverName').value;
+        if (serverName) {
+            fetch('/addtheserver', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ serverName: serverName })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    throw new Error('Failed to add server');
+                }
+            })
+            .then(data => {
+                console.log('Success:', data);
+                // Optionally, handle successful response, e.g., update UI or display a message
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                // Optionally, handle error response, e.g., display an error message in the UI
+            });
+        }
+     }
+    </script>
+</body>
+</html>
