@@ -1,11 +1,12 @@
 import hashlib
 from logging import exception
 import requests
-IP = input("Enter the IP of the server you're connecting to: ")
+IP = input("Enter the IP or Domain of the server you're connecting to: ")
 Port = int(input("What is the port?"))
-DomainType = int(input("Is it a domain or an IP? type 1. for domain and 2. for IP))
+DomainType = int(input("Is it a domain or an IP? type 1. for domain and 2. for IP"))
 
 servercoinwallet = input("What is the servercoinwallet for this?")
+httptype = input("type the http type it is.")
 typeofcoins = int(input("1. for not FIAT and 2. for FIAT"))
 if typeofcoins == 1:
  coinsperimpression = input("How many impressions per coin? ?")
@@ -150,7 +151,11 @@ while thingvalue == True:
             serverlist.append(serverpower)
         else:
             thingvalue = False
-url ="http://"+ IP + ":" + str(Port) + "/recieveservers"
+if DomainType == 2:
+ url =httptype+ IP + ":" + str(Port) + "/recieveservers"
+else:
+ url = httptype+str(IP)+"/recieveservers"
+print("URL: "+str(url))
     
     
 def addservertothat(server):
@@ -163,7 +168,7 @@ for item in serverlist:
             addservertothat(item)
         except:
             lol=True
-        
+
 url2 = "http://"+IP+":"+str(Port)+"/recieveservers"
 servers = []
 try:
@@ -1184,4 +1189,3 @@ thread2 = threading.Thread(target=loop2)
 thread2.start()
 if __name__ == '__main__':
     app.run(port=8000,host="0.0.0.0")
-
