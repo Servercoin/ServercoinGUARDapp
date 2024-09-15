@@ -1,0 +1,8 @@
+﻿IMPORTANT: Use the command gunicorn -b 0.0.0.0:PORT(The port of your thing) app:app to make the thing be able to handle multiple requests at a time(While right now not really an issue due to low users could be an issue later)
+Enter the IP or Domain of the server you're connecting to:
+What is the port(Type whatever if it’s a domain)?
+Is it a domain or an IP? type 1. for domain and 2. for IP
+type the http type it is.(Type https:// if it’s https and type http:// if it’s http)
+1. for not FIAT and 2. for FIAT(This is about the price of the ads, if it’s FIAT it changes the amount of servercoins per impression based on the price of servercoin, it doesn’t change the payment method)
+How many impressions per coin? ?(The impressions are ad impressions of ads on your app)
+1. for stopping this and 2. for continuing this(Press 1 if you aren’t using the FIAT price press 2 if you are using a FIAT price)
