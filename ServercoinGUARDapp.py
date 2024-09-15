@@ -3,6 +3,8 @@ from logging import exception
 import requests
 IP = input("Enter the IP of the server you're connecting to: ")
 Port = int(input("What is the port?"))
+DomainType = int(input("Is it a domain or an IP? type 1. for domain and 2. for IP))
+
 servercoinwallet = input("What is the servercoinwallet for this?")
 typeofcoins = int(input("1. for not FIAT and 2. for FIAT"))
 if typeofcoins == 1:
