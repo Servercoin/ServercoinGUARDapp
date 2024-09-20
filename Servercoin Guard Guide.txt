@@ -1,4 +1,5 @@
 ﻿IMPORTANT: Use the command gunicorn -b 0.0.0.0:PORT(The port of your thing) app:app to make the thing be able to handle multiple requests at a time(While right now not really an issue due to low users could be an issue later)
+The python file for this is 
 Enter the IP or Domain of the server you're connecting to:
 What is the port(Type whatever if it’s a domain)?
 Is it a domain or an IP? type 1. for domain and 2. for IP
