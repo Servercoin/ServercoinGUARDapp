@@ -40,6 +40,7 @@ serverlist = []
 thingvalue = True
 import json
 import os
+import secrets
 import threading
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import serialization
@@ -362,8 +363,11 @@ class ServerCoinGuard:
                 print("Error: "+str(e))
                 DOITNOW = False
           if DOITNOW == True:
-              Salt = random.randint(1,9999999)
-              cookieid = random.randint(1,99999999999999999999999999999999999999999999999999999)
+              
+              
+              salt = secrets.randbelow(9_999_999) + 1
+
+              cookie_id = secrets.randbits(666) 
               self.accounts[username] = {"Reviews":[],"Ratedreviews":[],"Comments":{},"CommentReviews":[],"ReviewNum":0,"cookieid":cookieid,"Password":hashlib.sha256((walletkey+str(Salt)).encode('utf-8')).hexdigest(),"Salt":str(Salt)}
               print(self.accounts[username]) 
               self.cookieidtoaccount[cookieid] = {"Username":username}
@@ -481,7 +485,7 @@ class ServerCoinGuard:
                 print("Error: "+str(e))
                 DOITNOW = False
           if DOITNOW == True:
-              salt = random.randint(1,9999999)
+              salt = secrets.randbelow(9_999_999) + 1
               truepassword = str(newpassword)+str(salt)
               Encodedpassword = hashlib.sha256(truepassword.encode('utf-8')).hexdigest()
               self.accounts[username]["Salt"] = str(salt)
@@ -493,7 +497,7 @@ class ServerCoinGuard:
         print("Account: "+str(self.accounts[username]))
         Encodedpassword = hashlib.sha256((password+str(self.accounts[username]["Salt"])).encode('utf-8')).hexdigest()
         if Encodedpassword == self.accounts[username]["Password"]:
-            salt = random.randint(1,9999999)
+            salt = secrets.randbelow(9_999_999) + 1
             truepassword = str(newpassword)+str(salt)
             Encodedpassword2 = hashlib.sha256(truepassword.encode('utf-8')).hexdigest()
           
@@ -692,7 +696,7 @@ class ServerCoinGuard:
     def logout(self,cookieid):
         username = self.cookieidtoaccount[int(cookieid)]["Username"]
         del self.cookieidtoaccount[int(cookieid)]
-        cookieid = random.randint(1,99999999999999999999999999999999999999999999999999999)
+        cookieid = secrets.randbits(256) 
         self.accounts[username] = {"Reviews":self.accounts[username]["Reviews"],"Ratedreviews":self.accounts[username]["Ratedreviews"],"Comments":self.accounts[username]["Comments"],"CommentReviews":self.accounts[username]["CommentReviews"],"ReviewNum":self.accounts[username]["ReviewNum"],"cookieid":cookieid,"Password":self.accounts[username]["Password"],"Salt":self.accounts[username]["Salt"]}
         self.cookieidtoaccount[int(cookieid)] = {"Username":username}
         print("COOKIEIDS: "+str(self.cookieidtoaccount))
