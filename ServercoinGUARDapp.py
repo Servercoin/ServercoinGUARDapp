@@ -365,9 +365,9 @@ class ServerCoinGuard:
           if DOITNOW == True:
               
               
-              salt = secrets.randbelow(9_999_999) + 1
+              Salt = secrets.randbelow(9_999_999) + 1
 
-              cookie_id = secrets.randbits(256) 
+              cookieid = secrets.randbits(256) 
               self.accounts[username] = {"Reviews":[],"Ratedreviews":[],"Comments":{},"CommentReviews":[],"ReviewNum":0,"cookieid":cookieid,"Password":hashlib.sha256((walletkey+str(Salt)).encode('utf-8')).hexdigest(),"Salt":str(Salt)}
               print(self.accounts[username]) 
               self.cookieidtoaccount[cookieid] = {"Username":username}
